@@ -1,0 +1,86 @@
+# Adding methods to objects
+You can add methods to an existing object like
+
+|obj = Object.new
+|def obj.talk
+|  puts "I am an object"
+|end
+
+# Number formating
+You can format numbers using the % operator
+|>> "%.2f" % 1234.123123
+|=> "1234.12"
+
+# Object's innate methods
+The Object class defines 50+ methods that instances of this class
+inherit.
+
+The {{object_id}} method returns a unique identifier for each Ruby
+object.
+
+The {{responds_to?}} method indicates whether an object responds to a
+given message. E.g:
+
+|>> obj = Object.new
+|=> #<Object:0x1012d1f48>
+|>> obj.respond_to? :respond_to?
+|=> true
+|>> obj.respond_to? :respond_to_other?
+|=> false
+
+The {{send}} method sends an message to a given object. Combining the
+three methods is a convoluted example, ypu can write:
+
+|>> if obj.respond_to? :object_id
+|>> obj.send :object_id
+|>> end
+|=> 2157350820
+
+You will likely check that an object responds to a given message before
+sending the request through send.
+
+# Method arguments
+Variables listed in the method definition are the method's formal
+parameters, and the values you supply to the method when you call it are
+the corresponding arguments.
+
+#table Sample method signature with required, optional, and default-valued arguments
+|| Argument types | Method signature | sample calls | variable assginments|
+| Required (R) | def m(a,b,c) | m(1,2,3) | a=1, b=2, c=3|
+| Optional (O) | def m(*a) | m(1,2,3) | a = [1,2,3]|
+| Default value (D) | def m(a=1) | m    | a = 1|
+| |                              | m(2) | a =2 |
+| R, O | def m(a,*b) | m(1)     | a = 1, b = [] |
+|      |             | m(1,2,3) | a = 1, b = [2,3]|
+| R, D | def m(a,b=1) | m(2)  | a = 2, b = 1|
+|      |              | m(2,3)| a = 2, b = 3|
+| D, O | def m(a=1,*b) | m    | a = 1, b = []|
+|      |               | m(2) | a = 2, b = []|
+| R, D, O, R | def m(a,b=2,c*,d) | m(1,3)       | a = 1, b = 2, c = [], d = 3    |
+|            |                   | m(1,3,5)     | a = 1, b = 3, c = [], d = 5    |
+|            |                   | m(1,3,5,7)   | a = 1, b = 3, c = [5], d = 7   |
+|            |                   | m(1,3,5.7.9) | a = 1, b = 3, c = [5,7], d = 9 |
+
+What does not work is to put splat operators before default values. So the following is a syntax error:
+
+|def broken_args(x, *y, z=1)
+
+# Local variables
+Local variable names start with a lowercase letter or an underscore and are made up of alphanumeric characters and underscores.
+
+Most variables are references to an object, but some objects in Ruby are stored as immediate values. These include integers, symbols. and special objects true, false, and nil. When you assign one of this values to a variable, the variable holds the value itself, rather than a reference to it. In practical terms, this does not matter.
+
+# Duplicating and freezing objects
+You can duplicate an object using the {{dup}} method. You can also freeze an object, preventing its modification, using the freeze method. There is also a {{clone}} method, which is a lot like dup. The difference is that {{clone}} keeps the 'freeze' status of the origin object in the duplicate.
+
+# Identifiers
+
+When Ruby sees a plain word sitting there (a bareword identifier) it interprets it as one of three things:
+* A local variable
+* A keyword
+* A method call
+
+Here is how Ruby decides what it's seeing when it encounters a plain identifier:
+_ If the identifier is a keyword, it's a keyword
+_ If there's an equal sigh to the right of the identifier, it's a local variable undergoing assignment.
+_ Otherwise, the identifier is assumed to be a method call
